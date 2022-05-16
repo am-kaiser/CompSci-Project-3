@@ -1,6 +1,7 @@
 # Computational Physics and Machine Learning: Project 3
 
 This repository contains scripts to explore Gaussian Process Regression. This repository was setup for project 3 of the lecture Computational Physics and Machine Learning.
+
 ## More information:
 
 
