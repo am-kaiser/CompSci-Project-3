@@ -19,7 +19,8 @@ def define_zhouetal11(z, x):
 
 
 def create_1D_grid(start=0.0, end=1.0, step_size=0.1):
-    return np.linspace(start, end, num = int((end - start) /step_size))
+    grid_values = np.linspace(start, end, num = int((end - start) /step_size))
+    return grid_values.reshape(grid_values.size, 1)
 
 
 def create_data(func_param, func_name='zhouetal'):
@@ -29,3 +30,14 @@ def create_data(func_param, func_name='zhouetal'):
         raise Exception('Function ' + str(func_name) + ' is not defined.')
 
     return func_values
+
+
+def split_train_test_data(x_values, y_values):
+    # Set seed
+    random_state = np.random.RandomState(1234)
+    # Choose indices for training and testing dataset
+    train_perc = int(y_values.size * 1)
+    training_indices = random_state.choice(np.arange(y_values.size), size=train_perc, replace=False)
+    testing_indices = np.array([0]) #np.array([i for i in np.arange(y_values.size) if i not in training_indices])
+
+    return x_values[training_indices, :], x_values[testing_indices, :], y_values[training_indices, :], y_values[testing_indices, :]
