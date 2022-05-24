@@ -103,6 +103,3 @@ def plot_posteriors_squared_error(x, y, z, posteriors, single=False):
         fig, axs = plt.subplots(1)
         cs = axs.contourf(x, y, squared_error)
         fig.colorbar(cs, ax=axs, shrink=0.95)
-
-
-

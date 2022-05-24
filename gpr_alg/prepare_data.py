@@ -1,6 +1,6 @@
 """Script which creates data to which GPR will be applied."""
 import numpy as np
-from sklearn.model_selection import train_test_split
+from sklearn import preprocessing
 
 
 def define_zhouetal11(z, x):
@@ -57,3 +57,8 @@ def split_train_test_data(x_values, y_values, train_perc=0.8):
     return x_values[training_indices, :], x_values[testing_indices, :], y_values[training_indices, :], y_values[
                                                                                                        testing_indices,
                                                                                                        :]
+
+
+def rescale_data(data_values):
+    scaler = preprocessing.StandardScaler().fit(data_values)
+    return scaler.transform(data_values)
