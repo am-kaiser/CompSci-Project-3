@@ -36,6 +36,8 @@ def make_3D_surface_plot(x, y, z, title=None, fig=None, position=111, add_colorb
 
 
 def make_2D_conf_interval_plot(grid_values, obs_values, grid_values_train, obs_values_train, mean_pred, std_pred):
+    plt.figure(figsize=(5, 5))
+    plt.rc('font', **{'size': '11'})
     plt.plot(grid_values, obs_values, linestyle="dotted")
     plt.scatter(grid_values_train, obs_values_train, label="Observations", s=50)
     plt.scatter(grid_values, mean_pred, label="Mean Prediction", marker='v')

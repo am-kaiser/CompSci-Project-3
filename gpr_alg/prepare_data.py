@@ -48,7 +48,7 @@ def create_data(func_param, func_name='zhouetal'):
 
 def split_train_test_data(x_values, y_values, train_perc=0.8):
     # Set seed
-    random_state = np.random.RandomState(1234)
+    random_state = np.random.RandomState(2022)
     # Choose indices for training and testing dataset
     train_len = int(y_values.size * train_perc)
     training_indices = random_state.choice(np.arange(y_values.size), size=train_len, replace=False)
@@ -59,6 +59,14 @@ def split_train_test_data(x_values, y_values, train_perc=0.8):
                                                                                                        :]
 
 
-def rescale_data(data_values):
-    scaler = preprocessing.StandardScaler().fit(data_values)
-    return scaler.transform(data_values)
+def rescale_data(data_values, type="standardization"):
+    """
+    Standardize input by removing the mean and scaling to unit variance
+    :param data_values: to be scaled values
+    """
+    if type == 'standardization':
+        scaler = preprocessing.StandardScaler().fit(data_values)
+    elif type == 'normalization':
+        scaler = preprocessing.Normalizer().fit(data_values)
+
+    return scaler.transform(data_values), scaler
