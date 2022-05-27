@@ -29,13 +29,16 @@ def make_3D_surface_plot(x, y, z):
     fig.colorbar(surf, shrink=0.4, aspect=5)
 
 
-def make_3D_contour_plot(x, y, z):
+def make_3D_contour_plot(x, y, z, add_train=False, x_train=None, y_train=None):
     """Create 3D contour plot of given input."""
     # Create figure and axes for plot
     plt.rc('font', **{'size': '11'})
     fig, ax = plt.subplots(figsize=(5, 5))
     # Plot the surface.
     surf = ax.contourf(x, y, z)
+    # Add train points
+    if add_train:
+        ax.scatter(x_train, y_train, color='red')
     # Customize the z axis.
     ax.set_xlabel('x')
     ax.set_ylabel('t')

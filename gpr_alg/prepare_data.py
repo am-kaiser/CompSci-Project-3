@@ -35,11 +35,15 @@ def create_2D_grid(x1_start=0.0, x1_end=1.0, x1_step_size=0.1, x2_start=0.0, x2_
     return np.meshgrid(x1_values, x2_values)
 
 
-def create_data(func_param, func_name='zhouetal'):
+def create_data(func_param, func_name='zhouetal', add_noise=False):
     if func_name == 'zhouetal':
         func_values = define_zhouetal11(func_param[0], func_param[1])
     elif func_name == 'heat_equation':
         func_values = define_heat_equation(func_param[0], func_param[1])
+        if add_noise:
+            noise = np.random.normal(0, 1, size=func_values.size).resize(np.shape(func_values)[0],
+                                                                         np.shape(func_values)[1])
+            func_values = func_values + noise
     else:
         raise Exception('Function ' + str(func_name) + ' is not defined.')
 
