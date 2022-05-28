@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import sklearn.gaussian_process as gp
+from sklearn.model_selection import train_test_split
 
 from gpr_alg import prepare_data, plot_data, perform_gpr
 
@@ -62,7 +63,7 @@ def perform_1D_gpr(make_grid_search=True, kernel=gp.kernels.RBF(length_scale=1.0
         plt.show()
 
 
-def create_2D_data():
+def create_2D_data(add_noise=False):
     # Make grid
     # Note: x1=x, x2=t
     grid_x1, grid_x2 = prepare_data.create_2D_grid(x1_step_size=0.05, x2_step_size=0.05)
@@ -70,26 +71,25 @@ def create_2D_data():
     # Reshape grid values
     grid_resh = np.stack([grid_x1.flatten(), grid_x2.flatten()])
 
-    # Split data into test and training datasets
-    size_train_set = int(np.shape(grid_x1.flatten())[0] * 0.8)
-    grid_train = np.stack(
-        (np.random.choice(grid_x1.flatten(), size_train_set), np.random.choice(grid_x2.flatten(), size_train_set)),
-        axis=-1)
+    # Set seed
+    seed = np.random.default_rng(2022)
 
     # Create data
-    data = prepare_data.create_data(func_param=[grid_x1, grid_x2], func_name='heat_equation')
-    data_train = prepare_data.create_data(func_param=[grid_train[:, 0], grid_train[:, 1]], func_name='heat_equation')
+    data = prepare_data.create_data(func_param=[grid_x1, grid_x2], func_name='heat_equation', add_noise=add_noise)
+
+    # Split data into test and training datasets
+    grid_train, _, data_train, _ = train_test_split(np.hstack([grid_x1.reshape(-1,1), grid_x2.reshape(-1,1)]), data.reshape(-1,1), test_size=0.2)
 
     # Scale data (i.e. normalize)
     data_scaled, scaler = prepare_data.rescale_data(data.reshape(-1, 1), type='standardization')
-    data_train_scaled = scaler.transform(data_train.reshape(-1, 1))
+    data_train_scaled = scaler.transform(data_train)
 
     return grid_x1, grid_x2, grid_train, grid_resh, data_train_scaled, data_scaled
 
 
-def perform_2D_gpr(make_grid_search=True, kernel=gp.kernels.RBF(length_scale=1.0, length_scale_bounds=(1e-5, 1e5))):
+def perform_2D_gpr(make_grid_search=True, kernel=gp.kernels.RBF(length_scale=1.0, length_scale_bounds=(1e-5, 1e5)), add_noise=False):
     # Load grid and data
-    grid_x1, grid_x2, grid_train, full_grid, data_train, data = create_2D_data()
+    grid_x1, grid_x2, grid_train, full_grid, data_train, data = create_2D_data(add_noise)
 
     # Search for best model with a grid search
     if make_grid_search:
@@ -119,7 +119,7 @@ def perform_2D_gpr(make_grid_search=True, kernel=gp.kernels.RBF(length_scale=1.0
         stats_df = stats_df[~stats_df['pred_mean'].apply(tuple).duplicated()]
 
         # Save dataframe
-        store = pd.HDFStore('grid_search_stats_2D_100_iterations.h5')
+        store = pd.HDFStore('grid_search_stats_2D_100_iterations_with_noise.h5')
         store['df'] = stats_df
 
     # Perform Gaussian process regression for specific kernel
@@ -155,7 +155,7 @@ if __name__ == "__main__":
     warnings.filterwarnings('ignore')
 
     tic = time.perf_counter()
-    perform_1D_gpr(make_grid_search=True)
-    # perform_2D_gpr(make_grid_search=True)
+    # perform_1D_gpr(make_grid_search=True)
+    perform_2D_gpr(make_grid_search=True, add_noise=True)
     toc = time.perf_counter()
     print(f"Run time: {toc - tic:0.4f} seconds")
