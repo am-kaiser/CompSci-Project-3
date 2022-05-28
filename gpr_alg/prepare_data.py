@@ -41,8 +41,8 @@ def create_data(func_param, func_name='zhouetal', add_noise=False):
     elif func_name == 'heat_equation':
         func_values = define_heat_equation(func_param[0], func_param[1])
         if add_noise:
-            noise = np.random.normal(0, 1, size=func_values.size).resize(np.shape(func_values)[0],
-                                                                         np.shape(func_values)[1])
+            np.random.seed(2022)
+            noise = np.random.normal(0, 0.1, size=func_values.size).reshape(np.shape(func_values)[0], np.shape(func_values)[1])                                                         
             func_values = func_values + noise
     else:
         raise Exception('Function ' + str(func_name) + ' is not defined.')

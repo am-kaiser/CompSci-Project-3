@@ -12,7 +12,9 @@ def search_best_model_scikit(obs_train, grid_train, full_grid, get_std=False):
         {"kernel": [gp.kernels.RationalQuadratic(length_scale=ls, length_scale_bounds=(1e-5, 1e5)) for ls in
                     np.linspace(0, 1, 11)]},
         {"kernel": [gp.kernels.ExpSineSquared(length_scale=ls, length_scale_bounds=(1e-5, 1e5)) for ls in
-                    np.linspace(0, 1, 11)]}]
+                    np.linspace(0, 1, 11)]},
+        {"kernel": [gp.kernels.Sum((gp.kernels.ExpSineSquared(length_scale=ls, length_scale_bounds=(1e-5, 1e5)) for ls in
+                    np.linspace(0, 1, 11)), (gp.kernels.WhiteKernel(noise_level=nl) for nl in np.linspace(0, 1, 11)))]}]
 
     # Define regressor
     # Note: a value (alpha) larger than machine epsilon is added to the diagonal to ensure positive semi definite
@@ -44,7 +46,10 @@ def search_best_model(obs_train, grid_train, full_grid, full_data, get_std=False
         {"kernel": [gp.kernels.RationalQuadratic(length_scale=ls, length_scale_bounds=(1e-5, 1e5)) for ls in
                     np.linspace(0, 5, 6)]},
         {"kernel": [gp.kernels.ExpSineSquared(length_scale=ls, length_scale_bounds=(1e-5, 1e5)) for ls in
-                    np.linspace(0, 5, 6)]}]
+                    np.linspace(0, 5, 6)]},
+        {"kernel": [gp.kernels.Sum(gp.kernels.RBF(length_scale=1, length_scale_bounds=(1e-5, 1e5)), gp.kernels.WhiteKernel(noise_level=1))]},
+        {"kernel": [gp.kernels.Sum(gp.kernels.RationalQuadratic(length_scale=1, length_scale_bounds=(1e-5, 1e5)), gp.kernels.WhiteKernel(noise_level=1))]},
+        {"kernel": [gp.kernels.Sum(gp.kernels.ExpSineSquared(length_scale=1, length_scale_bounds=(1e-5, 1e5)), gp.kernels.WhiteKernel(noise_level=1))]}]
 
     # Create array to save statistics for different kernels
     kernels = []
