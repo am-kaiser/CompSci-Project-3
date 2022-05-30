@@ -67,6 +67,7 @@ def rescale_data(data_values, type="standardization"):
     """
     Standardize input by removing the mean and scaling to unit variance
     :param data_values: to be scaled values
+    :param type: type of standardization
     """
     if type == 'standardization':
         scaler = preprocessing.StandardScaler().fit(data_values)
