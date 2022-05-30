@@ -19,6 +19,7 @@ def make_3D_surface_plot(x, y, z):
     # Create figure and axes for plot
     plt.rc('font', **{'size': '11'})
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"}, figsize=(5, 5))
+    fig.tight_layout(pad=3)
     # Plot the surface.
     surf = ax.plot_surface(x, y, z, linewidth=0, antialiased=False)  # , cmap=cm.batlow)
     # Customize the z axis.
@@ -34,6 +35,7 @@ def make_3D_contour_plot(x, y, z, add_train=False, x_train=None, y_train=None):
     # Create figure and axes for plot
     plt.rc('font', **{'size': '11'})
     fig, ax = plt.subplots(figsize=(5, 5))
+    fig.tight_layout(pad=3)
     # Plot the surface.
     surf = ax.contourf(x, y, z)
     # Add train points
@@ -77,9 +79,11 @@ def plot_posteriors(x, y, z, mean_pred, cov_pred, posterior_nums=5, add_train_in
     # Plot analytic solution
     plt.rc('font', **{'size': '11'})
     fig, axs = plt.subplots(int(np.ceil((posterior_nums + 1) / 2)), 2, figsize=(5, 5))
-    fig.tight_layout()
+    fig.tight_layout(pad=3)
     axs = axs.ravel()
     ax = axs[0]
+    ax.set_xlabel('x')
+    ax.set_ylabel('t')
     cs = ax.contourf(x, y, z, levels=levels, extend='min')
     # Add indicators for train dataset
     if add_train_ind:
@@ -88,6 +92,8 @@ def plot_posteriors(x, y, z, mean_pred, cov_pred, posterior_nums=5, add_train_in
     # Plot posteriors
     for i, post in enumerate(posteriors, 1):
         cs = axs[i].contourf(x, y, post.reshape(-1, np.shape(x)[0]), levels=levels, extend='min')
+        axs[i].set_xlabel('x')
+        axs[i].set_ylabel('t')
 
     # Place colorbar at desire position
     fig.colorbar(cs, ax=axs.ravel().tolist(), shrink=0.95)
