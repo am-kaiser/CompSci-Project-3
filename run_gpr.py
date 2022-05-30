@@ -63,10 +63,18 @@ def perform_1D_gpr(make_grid_search=True, kernel=gp.kernels.RBF(length_scale=1.0
         plt.show()
 
 
-def create_2D_data(add_noise=False):
+def create_2D_data(add_noise=False, apply_conditions=True):
     # Make grid
     # Note: x1=x, x2=t
-    grid_x1, grid_x2 = prepare_data.create_2D_grid(x1_step_size=0.05, x2_step_size=0.05)
+    grid_x1, grid_x2 = prepare_data.create_2D_grid(x1_step_size=0.1, x2_step_size=0.1)
+    #print(grid_x1[1:, 1:-1])
+
+    grid_ini_x1 = grid_x1[:1, :]
+    grid_ini_x2 = grid_x2[:1, :]
+    grid_lbound_x1 = grid_x1[:, :1]
+    grid_lbound_x2 = grid_x2[:, :1]
+    grid_hbound_x1 = grid_x1[:, -1:]
+    grid_hbound_x2 = grid_x2[:, -1:]
 
     # Reshape grid values
     grid_resh = np.stack([grid_x1.flatten(), grid_x2.flatten()])
@@ -78,7 +86,27 @@ def create_2D_data(add_noise=False):
     data = prepare_data.create_data(func_param=[grid_x1, grid_x2], func_name='heat_equation', add_noise=add_noise)
 
     # Split data into test and training datasets
-    grid_train, _, data_train, _ = train_test_split(np.hstack([grid_x1.reshape(-1,1), grid_x2.reshape(-1,1)]), data.reshape(-1,1), test_size=0.2)
+    if(apply_conditions):
+        grid_ini_x1 = grid_x1[:1, :]
+        grid_ini_x2 = grid_x2[:1, :]
+        grid_ini = np.array([grid_ini_x1.flatten(), grid_ini_x2.flatten()]).T
+        grid_lbound_x1 = grid_x1[:, :1]
+        grid_lbound_x2 = grid_x2[:, :1]
+        grid_lbound = np.array([grid_lbound_x1.flatten(), grid_lbound_x2.flatten()]).T
+        grid_hbound_x1 = grid_x1[:, -1:]
+        grid_hbound_x2 = grid_x2[:, -1:]
+        grid_hbound = np.array([grid_hbound_x1.flatten(), grid_hbound_x2.flatten()]).T
+        data_ini = data[:1, :].reshape(-1, 1)
+        data_lbound = data[:, :1].reshape(-1, 1)
+        data_hbound = data[:, -1:].reshape(-1, 1)
+        grid_train, _, data_train, _ = train_test_split(np.hstack([grid_x1[1:, 1:-1].reshape(-1, 1), grid_x2[1:, 1:-1].reshape(-1, 1)]),
+                                                        data[1:, 1:-1].reshape(-1, 1), test_size=0.2)
+        grid_train = np.concatenate([grid_train, grid_ini, grid_lbound, grid_hbound])
+        data_train = np.concatenate([data_train, data_ini, data_lbound, data_hbound])
+
+    else:
+        grid_train, _, data_train, _ = train_test_split(np.hstack([grid_x1.reshape(-1,1), grid_x2.reshape(-1,1)]), data.reshape(-1,1), test_size=0.2)
+
 
     # Scale data (i.e. normalize)
     data_scaled, scaler = prepare_data.rescale_data(data.reshape(-1, 1), type='standardization')
@@ -156,6 +184,6 @@ if __name__ == "__main__":
 
     tic = time.perf_counter()
     # perform_1D_gpr(make_grid_search=True)
-    perform_2D_gpr(make_grid_search=True, add_noise=True)
+    perform_2D_gpr(make_grid_search=False, add_noise=False)
     toc = time.perf_counter()
     print(f"Run time: {toc - tic:0.4f} seconds")
