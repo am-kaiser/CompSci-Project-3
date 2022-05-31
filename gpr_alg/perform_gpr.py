@@ -2,7 +2,6 @@ import re
 
 import numpy as np
 import sklearn.gaussian_process as gp
-from sklearn.model_selection import GridSearchCV
 
 
 def search_best_model(obs_train, grid_train, full_grid, full_data, get_std=False):
@@ -14,9 +13,12 @@ def search_best_model(obs_train, grid_train, full_grid, full_data, get_std=False
                     np.linspace(0, 5, 6)]},
         {"kernel": [gp.kernels.ExpSineSquared(length_scale=ls, length_scale_bounds=(1e-5, 1e5)) for ls in
                     np.linspace(0, 5, 6)]},
-        {"kernel": [gp.kernels.Sum(gp.kernels.RBF(length_scale=1, length_scale_bounds=(1e-5, 1e5)), gp.kernels.WhiteKernel(noise_level=1))]},
-        {"kernel": [gp.kernels.Sum(gp.kernels.RationalQuadratic(length_scale=1, length_scale_bounds=(1e-5, 1e5)), gp.kernels.WhiteKernel(noise_level=1))]},
-        {"kernel": [gp.kernels.Sum(gp.kernels.ExpSineSquared(length_scale=1, length_scale_bounds=(1e-5, 1e5)), gp.kernels.WhiteKernel(noise_level=1))]}]
+        {"kernel": [gp.kernels.Sum(gp.kernels.RBF(length_scale=1, length_scale_bounds=(1e-5, 1e5)),
+                                   gp.kernels.WhiteKernel(noise_level=1))]},
+        {"kernel": [gp.kernels.Sum(gp.kernels.RationalQuadratic(length_scale=1, length_scale_bounds=(1e-5, 1e5)),
+                                   gp.kernels.WhiteKernel(noise_level=1))]},
+        {"kernel": [gp.kernels.Sum(gp.kernels.ExpSineSquared(length_scale=1, length_scale_bounds=(1e-5, 1e5)),
+                                   gp.kernels.WhiteKernel(noise_level=1))]}]
 
     # Create array to save statistics for different kernels
     kernels = []
@@ -63,7 +65,7 @@ def perform_gpr_alg(obs_train, grid_train, full_grid,
     # Define regressor
     # Note that the kernel hyperparameters are optimized during fitting
     gaussianprocess = gp.GaussianProcessRegressor(kernel=kernel, n_restarts_optimizer=0, alpha=3e-7)
-    
+
     # Fit Gaussian process
     gaussianprocess.fit(grid_train, obs_train)
 

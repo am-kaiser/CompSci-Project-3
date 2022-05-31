@@ -86,7 +86,7 @@ def create_2D_data(add_noise=False, apply_conditions=True):
 
     # Split data into test and training datasets
     # Include initial and boundary conditions in train dataset
-    if(apply_conditions):
+    if apply_conditions:
 
         # Initial values
         grid_ini_x1 = grid_x1[:1, :]
@@ -106,12 +106,13 @@ def create_2D_data(add_noise=False, apply_conditions=True):
         grid_hbound_x1 = grid_x1[:, -1:]
         grid_hbound_x2 = grid_x2[:, -1:]
         grid_hbound = np.array([grid_hbound_x1.flatten(), grid_hbound_x2.flatten()]).T
-        
+
         data_hbound = data[:, -1:].reshape(-1, 1)
 
         # Split data in train dataset (without initial and boundary conditions)
-        grid_train, _, data_train, _ = train_test_split(np.hstack([grid_x1[1:, 1:-1].reshape(-1, 1), grid_x2[1:, 1:-1].reshape(-1, 1)]),
-                                                        data[1:, 1:-1].reshape(-1, 1), test_size=0.25, random_state=2022)
+        grid_train, _, data_train, _ = train_test_split(
+            np.hstack([grid_x1[1:, 1:-1].reshape(-1, 1), grid_x2[1:, 1:-1].reshape(-1, 1)]),
+            data[1:, 1:-1].reshape(-1, 1), test_size=0.25, random_state=2022)
 
         # Add initial and boundary conditions to train dataset
         grid_train = np.concatenate([grid_train, grid_ini, grid_lbound, grid_hbound])
@@ -120,8 +121,8 @@ def create_2D_data(add_noise=False, apply_conditions=True):
         print('train set size: ' + str(np.shape(grid_train)[0] / np.shape(grid_x1.flatten())[0]))
 
     else:
-        grid_train, _, data_train, _ = train_test_split(np.hstack([grid_x1.reshape(-1,1), grid_x2.reshape(-1,1)]), data.reshape(-1,1), test_size=0.2, random_state=2022)
-
+        grid_train, _, data_train, _ = train_test_split(np.hstack([grid_x1.reshape(-1, 1), grid_x2.reshape(-1, 1)]),
+                                                        data.reshape(-1, 1), test_size=0.2, random_state=2022)
 
     # Scale data (i.e. normalize)
     data_scaled, scaler = prepare_data.rescale_data(data.reshape(-1, 1), type='standardization')
@@ -130,7 +131,8 @@ def create_2D_data(add_noise=False, apply_conditions=True):
     return grid_x1, grid_x2, grid_train, grid_resh, data_train_scaled, data_scaled
 
 
-def perform_2D_gpr(make_grid_search=True, kernel=gp.kernels.RBF(length_scale=1.0, length_scale_bounds=(1e-5, 1e5)), add_noise=False):
+def perform_2D_gpr(make_grid_search=True, kernel=gp.kernels.RBF(length_scale=1.0, length_scale_bounds=(1e-5, 1e5)),
+                   add_noise=False):
     """Function to perform gaussian process regression (gpr) for one 2D input data
     :param make_grid_search: perform grid search True or False
     :param kernel: kernel for gpr
@@ -198,6 +200,7 @@ def perform_2D_gpr(make_grid_search=True, kernel=gp.kernels.RBF(length_scale=1.0
 
 if __name__ == "__main__":
     import warnings
+
     warnings.filterwarnings('ignore')
 
     tic = time.perf_counter()
