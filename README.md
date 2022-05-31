@@ -3,7 +3,7 @@
 This repository contains scripts to explore Gaussian Process Regression. This repository was setup for project 3 of the lecture Computational Physics and Machine Learning.
 
 ## More information:
-
+The main file to run the scripts is `run_gpr.py` and the jupyter notebooks explain how to find the best GPR for the given data.
 
 ## How to setup
 1. Create conda environment

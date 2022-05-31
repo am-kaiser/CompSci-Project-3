@@ -42,7 +42,8 @@ def create_data(func_param, func_name='zhouetal', add_noise=False):
         func_values = define_heat_equation(func_param[0], func_param[1])
         if add_noise:
             np.random.seed(2022)
-            noise = np.random.normal(0, 0.1, size=func_values.size).reshape(np.shape(func_values)[0], np.shape(func_values)[1])                                                         
+            noise = np.random.normal(0, 0.1, size=func_values.size).reshape(np.shape(func_values)[0],
+                                                                            np.shape(func_values)[1])
             func_values = func_values + noise
     else:
         raise Exception('Function ' + str(func_name) + ' is not defined.')
@@ -67,6 +68,7 @@ def rescale_data(data_values, type="standardization"):
     """
     Standardize input by removing the mean and scaling to unit variance
     :param data_values: to be scaled values
+    :param type: type of standardization
     """
     if type == 'standardization':
         scaler = preprocessing.StandardScaler().fit(data_values)
