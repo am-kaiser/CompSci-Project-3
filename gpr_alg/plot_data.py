@@ -14,7 +14,7 @@ def make_2D_plot(data, grid, y_label):
     ax.set_ylabel(y_label)
 
 
-def make_3D_surface_plot(x, y, z):
+def make_3D_surface_plot(x, y, z, file_name=None):
     """Create 3D surface plot of given input."""
     # Create figure and axes for plot
     plt.rc('font', **{'size': '11'})
@@ -28,9 +28,12 @@ def make_3D_surface_plot(x, y, z):
     ax.set_zlabel('u(x,t)')
     # Add a color bar which maps values to colors.
     fig.colorbar(surf, shrink=0.4, aspect=5)
+    ax.view_init(21, 50)
+    if file_name is not None:
+        fig.savefig(file_name, bbox_inches='tight')
 
 
-def make_3D_contour_plot(x, y, z, add_train=False, x_train=None, y_train=None):
+def make_3D_contour_plot(x, y, z, add_train=False, x_train=None, y_train=None, file_name=None):
     """Create 3D contour plot of given input."""
     # Create figure and axes for plot
     plt.rc('font', **{'size': '11'})
@@ -46,6 +49,8 @@ def make_3D_contour_plot(x, y, z, add_train=False, x_train=None, y_train=None):
     ax.set_ylabel('t')
     # Add a color bar which maps values to colors.
     fig.colorbar(surf, shrink=0.5, aspect=5)
+    if file_name is not None:
+        fig.savefig(file_name, bbox_inches='tight')
 
 
 def make_2D_conf_interval_plot(grid_values, obs_values, grid_values_train, obs_values_train, mean_pred, std_pred):
@@ -67,7 +72,8 @@ def make_2D_conf_interval_plot(grid_values, obs_values, grid_values_train, obs_v
     ax.set_ylabel("$f(x)$")
 
 
-def plot_posteriors(x, y, z, mean_pred, cov_pred, posterior_nums=5, add_train_ind=False, x_train_val=None):
+def plot_posteriors(x, y, z, mean_pred, cov_pred, posterior_nums=5, add_train_ind=False, x_train_val=None,
+                    file_name=None):
     # Calculate posteriors
     posteriors = st.multivariate_normal.rvs(mean=mean_pred, cov=cov_pred, size=posterior_nums)
 
@@ -97,6 +103,9 @@ def plot_posteriors(x, y, z, mean_pred, cov_pred, posterior_nums=5, add_train_in
 
     # Place colorbar at desire position
     fig.colorbar(cs, ax=axs.ravel().tolist(), shrink=0.95)
+
+    if file_name is not None:
+        fig.savefig(file_name, bbox_inches='tight')
 
     return posteriors
 
