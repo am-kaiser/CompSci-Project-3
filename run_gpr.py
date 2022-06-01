@@ -48,10 +48,6 @@ def perform_1D_gpr(make_grid_search=True, kernel=gp.kernels.RBF(length_scale=1.0
 
         # Remove duplicate rows
         stats_df = stats_df[~stats_df['pred_mean'].apply(tuple).duplicated()]
-
-        # Save dataframe
-        #store = pd.HDFStore('grid_search_stats_1D_100_iterations.h5')
-        #store['df'] = stats_df
         stats_df.to_pickle('grid_search_stats_1D_100_iterations.pkl')
 
     # Perform Gaussian process regression for specific kernel
