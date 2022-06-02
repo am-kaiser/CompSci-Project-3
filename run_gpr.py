@@ -9,6 +9,7 @@ from sklearn.model_selection import train_test_split
 from gpr_alg import prepare_data, plot_data, perform_gpr
 import pickle
 
+
 def perform_1D_gpr(make_grid_search=True, kernel=gp.kernels.RBF(length_scale=1.0, length_scale_bounds=(1e-5, 1e5))):
     """Function to perform gaussian process regression (gpr) for one 1D input data
     :param make_grid_search: perform grid search True or False
@@ -29,7 +30,7 @@ def perform_1D_gpr(make_grid_search=True, kernel=gp.kernels.RBF(length_scale=1.0
         list_mean_pred = []
         list_cov_pred = []
 
-        for index in range(1, 21, 1):
+        for index in range(1, 101, 1):
             temp_kernels, temp_stats, temp_mean_pred, temp_cov_pred = perform_gpr.search_best_model(
                 obs_train=data_train, grid_train=grid_train,
                 full_grid=grid,
@@ -48,7 +49,7 @@ def perform_1D_gpr(make_grid_search=True, kernel=gp.kernels.RBF(length_scale=1.0
 
         # Remove duplicate rows
         stats_df = stats_df[~stats_df['pred_mean'].apply(tuple).duplicated()]
-        stats_df.to_pickle('grid_search_stats_1D_100_iterations.pkl')
+        stats_df.to_pickle('output/data/grid_search_stats_1D_100_iterations.pkl')
 
     # Perform Gaussian process regression for specific kernel
     else:
@@ -81,7 +82,7 @@ def create_2D_data(add_noise=False, apply_conditions=True):
     # Create data
     data = prepare_data.create_data(func_param=[grid_x1, grid_x2], func_name='heat_equation', add_noise=add_noise)
 
-    #Noiseless data used for initial conditions
+    # Noiseless data used for initial conditions
     data_noiseless = prepare_data.create_data(func_param=[grid_x1, grid_x2],
                                               func_name='heat_equation', add_noise=False)
     # Split data into test and training datasets
@@ -167,7 +168,7 @@ def perform_2D_gpr(make_grid_search=True, kernel=gp.kernels.RBF(length_scale=1.0
         stats_df = stats_df[~stats_df['pred_mean'].apply(tuple).duplicated()]
 
         # Save dataframe
-        stats_df.to_pickle('grid_search_stats_2D_100_iterations_with_noise.pkl')
+        stats_df.to_pickle('output/data/grid_search_stats_2D_100_iterations_with_noise.pkl')
 
     # Perform Gaussian process regression for specific kernel
     else:
@@ -202,7 +203,7 @@ if __name__ == "__main__":
     warnings.filterwarnings('ignore')
 
     tic = time.perf_counter()
-    # perform_1D_gpr(make_grid_search=True)
-    perform_2D_gpr(make_grid_search=True, add_noise=True)
+    perform_1D_gpr(make_grid_search=True)
+    # perform_2D_gpr(make_grid_search=True, add_noise=True)
     toc = time.perf_counter()
     print(f"Run time: {toc - tic:0.4f} seconds")
